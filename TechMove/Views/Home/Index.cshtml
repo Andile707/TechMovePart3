@@ -1,0 +1,95 @@
+﻿@{
+    ViewData["Title"] = "TechMove Contract Management";
+}
+
+<div class="container mt-5">
+
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold">TechMove Contract Management System</h1>
+        <p class="lead text-muted">
+            Manage clients, contracts, service requests, signed agreements, and currency-based service costs.
+        </p>
+          <!--
+        <div class="mt-4">
+            <a asp-controller="Contracts" asp-action="Index" class="btn btn-primary btn-lg me-2">
+                View Contracts
+            </a>
+            <a asp-controller="ServiceRequest" asp-action="Create" class="btn btn-outline-primary btn-lg">
+                Create Service Request
+            </a>
+        </div>-->
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <h4>Clients</h4>
+                    <p class="text-muted">
+                        Store client names, contact details, and regions.
+                    </p>
+                    <a asp-controller="Clients" asp-action="Index" class="btn btn-sm btn-primary">
+                        Manage Clients
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <h4>Contracts</h4>
+                    <p class="text-muted">
+                        Track contract dates, status, service levels, and signed PDF agreements.
+                    </p>
+                    <a asp-controller="Contracts" asp-action="Index" class="btn btn-sm btn-primary">
+                        Manage Contracts
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <h4>Service Requests</h4>
+                    <p class="text-muted">
+                        Create service requests and automatically convert USD costs to ZAR.
+                    </p>
+                    <a asp-controller="ServiceRequest" asp-action="Index" class="btn btn-sm btn-primary">
+                        Manage Requests
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row mt-5 g-4">
+
+        <div class="col-md-6">
+            <div class="p-4 bg-light rounded shadow-sm">
+                <h3>Workflow Rules</h3>
+                <p>
+                    Service requests cannot be created for contracts marked as
+                    <strong>Expired</strong> or <strong>On Hold</strong>.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="p-4 bg-light rounded shadow-sm">
+                <h3>Currency Integration</h3>
+                <p>
+                    The system consumes an external exchange-rate API to convert USD service costs into ZAR.
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+
