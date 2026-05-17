@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TechMove.Data;
 using TechMove.Enums;
+using TechMove.Factories;
 using TechMove.Models;
 using TechMove.Service;
 
@@ -12,11 +13,16 @@ namespace TechMove.Controllers
     {
         private readonly TechMoveDbContext _context;
         private readonly CurrencyService _currencyService;
+        private readonly IServiceRequestFactory _serviceRequestFactory;
 
-        public ServiceRequestController(TechMoveDbContext context, CurrencyService currencyService)
+        public ServiceRequestController(
+            TechMoveDbContext context,
+            CurrencyService currencyService,
+             IServiceRequestFactory serviceRequestFactory)
         {
             _context = context;
             _currencyService = currencyService;
+            _serviceRequestFactory = serviceRequestFactory;
         }
 
         public async Task<IActionResult> Index()
@@ -76,7 +82,16 @@ namespace TechMove.Controllers
 
             if (ModelState.IsValid)
             {
-                _context.ServiceRequests.Add(serviceRequest);
+                //_context.ServiceRequests.Add(serviceRequest);
+                var newServiceRequest = _serviceRequestFactory.Create(
+                    serviceRequest.ContractId,
+                    serviceRequest.Description,
+                    serviceRequest.CostUSD,
+                    serviceRequest.CostZAR,
+                    serviceRequest.Status
+                        );
+
+                _context.ServiceRequests.Add(newServiceRequest);
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Index));

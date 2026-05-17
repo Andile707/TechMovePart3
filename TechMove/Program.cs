@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TechMove.Data;
+using TechMove.Factories;
 using TechMove.Service;
 
 namespace TechMove
@@ -18,7 +19,10 @@ namespace TechMove
 
             builder.Services.AddHttpClient<CurrencyService>();
 
+            builder.Services.AddScoped<IServiceRequestFactory, ServiceRequestFactory>();
+
             builder.Services.AddScoped<FileValidationService>();
+
 
             var app = builder.Build();
 
