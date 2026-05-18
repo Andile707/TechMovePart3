@@ -9,6 +9,7 @@ using TechMove.Service;
 using TechMove.Observers;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
+using TechMove.Strategies;
 
 namespace TechMove.Controllers
 {
@@ -17,15 +18,18 @@ namespace TechMove.Controllers
         private readonly TechMoveDbContext _context;
         private readonly CurrencyService _currencyService;
         private readonly IServiceRequestFactory _serviceRequestFactory;
+        private readonly IServiceCostStrategy _serviceCostStrategy;
 
         public ServiceRequestController(
-            TechMoveDbContext context,
-            CurrencyService currencyService,
-             IServiceRequestFactory serviceRequestFactory)
+      TechMoveDbContext context,
+          CurrencyService currencyService,
+         IServiceRequestFactory serviceRequestFactory,
+            IServiceCostStrategy serviceCostStrategy)
         {
             _context = context;
             _currencyService = currencyService;
             _serviceRequestFactory = serviceRequestFactory;
+            _serviceCostStrategy = serviceCostStrategy;
         }
 
         public async Task<IActionResult> Index()
@@ -75,13 +79,8 @@ namespace TechMove.Controllers
 
             ModelState.Remove("CostZAR");
 
-            decimal exchangeRate = await _currencyService.GetUsdToZarRateAsync();
-
-            // serviceRequest.CostZAR = serviceRequest.CostUSD * exchangeRate;
-            serviceRequest.CostZAR = _currencyService.ConvertUsdToZar(
-                serviceRequest.CostUSD,
-                exchangeRate
-                 );
+            serviceRequest.CostZAR =
+             await _serviceCostStrategy.CalculateCostZarAsync(serviceRequest);
 
             if (ModelState.IsValid)
             {
@@ -167,8 +166,8 @@ namespace TechMove.Controllers
                 ModelState.AddModelError("", "Service Request cannot be updated because the contract is Expired or On Hold.");
             }
 
-            decimal exchangeRate = await _currencyService.GetUsdToZarRateAsync();
-            serviceRequest.CostZAR = serviceRequest.CostUSD * exchangeRate;
+            serviceRequest.CostZAR =
+              await _serviceCostStrategy.CalculateCostZarAsync(serviceRequest);
 
             if (ModelState.IsValid)
             {

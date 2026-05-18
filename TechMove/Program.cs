@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using TechMove.Data;
 using TechMove.Factories;
 using TechMove.Service;
+using TechMove.Strategies;
 
 namespace TechMove
 {
@@ -20,6 +21,9 @@ namespace TechMove
             builder.Services.AddHttpClient<CurrencyService>();
 
             builder.Services.AddScoped<IServiceRequestFactory, ServiceRequestFactory>();
+
+            
+            builder.Services.AddScoped<IServiceCostStrategy, UsdToZarCostStrategy>();
 
             builder.Services.AddScoped<FileValidationService>();
 

@@ -1,4 +1,4 @@
-﻿name: .NET Tests
+﻿name: TechMove CI Pipeline
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
     branches: [ main ]
 
 jobs:
-  test:
+   techmove-build-and-test:
     runs-on: windows-latest
 
     steps:
