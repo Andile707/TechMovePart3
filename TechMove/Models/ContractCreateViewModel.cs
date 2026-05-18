@@ -22,7 +22,7 @@ namespace TechMove.Models
         public ContractStatus Status { get; set; }
 
         [Required]
-        public string ServiceLevel { get; set; } = string.Empty;
+        public ServiceLevel ServiceLevel { get; set; }
 
         [Required]
         [Display(Name = "Signed Agreement PDF")]

@@ -22,8 +22,8 @@ namespace TechMove.Models
         [Required]
         public ContractStatus Status { get; set; }
 
-        [Required, StringLength(100)]
-        public string ServiceLevel { get; set; } = string.Empty;
+        [Required]
+        public ServiceLevel ServiceLevel { get; set; }
 
         // Uploaded PDF details
         public string? SignedAgreementFileName { get; set; }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TechMove.Data;
 
@@ -11,9 +12,11 @@ using TechMove.Data;
 namespace TechMove.Migrations
 {
     [DbContext(typeof(TechMoveDbContext))]
-    partial class TechMoveDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260518171518_UpdateFields")]
+    partial class UpdateFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

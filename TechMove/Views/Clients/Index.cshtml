@@ -8,7 +8,8 @@
     <thead>
         <tr>
             <th>Name</th>
-            <th>Contact Details</th>
+            <th>Telephone Number</th>
+            <th>Email</th>
             <th>Region</th>
             <th></th>
         </tr>
@@ -18,7 +19,8 @@
         {
             <tr>
                 <td>@client.Name</td>
-                <td>@client.ContactDetails</td>
+                <td>@client.TelephoneNumber</td>
+                <td>@client.Email</td>
                 <td>@client.Region</td>
                 <td>
                     <a asp-action="Details" asp-route-id="@client.ClientId">Details</a> |
