@@ -30,8 +30,8 @@ namespace TechMove.Models
         public decimal CostZAR { get; set; }
 
         [Required]
-        public ServiceRequestStatus Status { get; set; }
+        public ServiceRequestStatus Status { get; set; } = ServiceRequestStatus.Pending;
 
-        
+
     }
 }

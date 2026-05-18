@@ -6,6 +6,9 @@ using TechMove.Enums;
 using TechMove.Factories;
 using TechMove.Models;
 using TechMove.Service;
+using TechMove.Observers;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace TechMove.Controllers
 {
@@ -173,7 +176,24 @@ namespace TechMove.Controllers
                 {
                     _context.Update(serviceRequest);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Details), new { id = serviceRequest.ServiceRequestId });
+
+                    var loggerFactory = HttpContext.RequestServices
+                        .GetRequiredService<ILoggerFactory>();
+
+                    var subject = new ServiceRequestSubject();
+
+                    subject.Attach(
+                        new AdminServiceRequestObserver(
+                            loggerFactory.CreateLogger<AdminServiceRequestObserver>()));
+
+                    subject.Attach(
+                        new ClientServiceRequestObserver(
+                            loggerFactory.CreateLogger<ClientServiceRequestObserver>()));
+
+                    subject.Notify(serviceRequest);
+
+                    return RedirectToAction(nameof(Details),
+                        new { id = serviceRequest.ServiceRequestId });
                 }
                 catch (DbUpdateConcurrencyException)
                 {
