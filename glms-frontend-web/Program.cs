@@ -25,6 +25,11 @@ namespace TechMove
 
             builder.Services.AddScoped<FileValidationService>();
 
+            builder.Services.AddHttpClient("ApiClient", client =>
+            {
+                client.BaseAddress = new Uri("https://localhost:7001/");
+            });
+
 
             var app = builder.Build();
 
