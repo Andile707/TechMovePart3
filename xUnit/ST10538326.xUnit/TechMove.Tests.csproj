@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\TechMove\TechMove.csproj" />
+    <ProjectReference Include="..\..\TechMove\glms-frontend-web.csproj" />
   </ItemGroup>
 
   <ItemGroup>

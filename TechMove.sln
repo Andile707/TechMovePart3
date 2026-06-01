@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.37027.9
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechMove", "TechMove\TechMove.csproj", "{BAE8594D-32E2-431B-8579-CEDC490B60D8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "glms-frontend-web", "TechMove\glms-frontend-web.csproj", "{BAE8594D-32E2-431B-8579-CEDC490B60D8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechMove.Tests", "xUnit\ST10538326.xUnit\TechMove.Tests.csproj", "{1995ADA9-CDBD-4DCB-9DDA-F800B07369EB}"
 EndProject

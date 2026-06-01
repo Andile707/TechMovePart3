@@ -1,3 +1,8 @@
+using Microsoft.EntityFrameworkCore;
+using TechMove.Data;
+using TechMove.Factories;
+using TechMove.Service;
+using TechMove.Strategies;
 
 namespace glms_backend_api
 {
@@ -13,6 +18,9 @@ namespace glms_backend_api
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddDbContext<TechMoveDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             var app = builder.Build();
 

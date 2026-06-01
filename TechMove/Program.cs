@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using TechMove.Data;
 using TechMove.Factories;
 using TechMove.Service;
 using TechMove.Strategies;
@@ -15,8 +14,7 @@ namespace TechMove
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
-            builder.Services.AddDbContext<TechMoveDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            
 
             builder.Services.AddHttpClient<CurrencyService>();
 
