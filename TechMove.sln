@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechMove", "TechMove\TechMo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechMove.Tests", "xUnit\ST10538326.xUnit\TechMove.Tests.csproj", "{1995ADA9-CDBD-4DCB-9DDA-F800B07369EB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "glms-backend-api", "glms-backend-api\glms-backend-api.csproj", "{F4590922-1EF5-4BC4-A6A2-021EC38EECD9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{1995ADA9-CDBD-4DCB-9DDA-F800B07369EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1995ADA9-CDBD-4DCB-9DDA-F800B07369EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1995ADA9-CDBD-4DCB-9DDA-F800B07369EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4590922-1EF5-4BC4-A6A2-021EC38EECD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4590922-1EF5-4BC4-A6A2-021EC38EECD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4590922-1EF5-4BC4-A6A2-021EC38EECD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4590922-1EF5-4BC4-A6A2-021EC38EECD9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
