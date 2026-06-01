@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.37027.9
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "glms-frontend-web", "TechMove\glms-frontend-web.csproj", "{BAE8594D-32E2-431B-8579-CEDC490B60D8}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechMove.Tests", "xUnit\ST10538326.xUnit\TechMove.Tests.csproj", "{1995ADA9-CDBD-4DCB-9DDA-F800B07369EB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "glms-backend-api", "glms-backend-api\glms-backend-api.csproj", "{F4590922-1EF5-4BC4-A6A2-021EC38EECD9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "glms-frontend-web", "glms-frontend-web\glms-frontend-web.csproj", "{33E1EAC5-33B0-7769-1112-4DD0CFDEB0A1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,10 +15,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{BAE8594D-32E2-431B-8579-CEDC490B60D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BAE8594D-32E2-431B-8579-CEDC490B60D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BAE8594D-32E2-431B-8579-CEDC490B60D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BAE8594D-32E2-431B-8579-CEDC490B60D8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1995ADA9-CDBD-4DCB-9DDA-F800B07369EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1995ADA9-CDBD-4DCB-9DDA-F800B07369EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1995ADA9-CDBD-4DCB-9DDA-F800B07369EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -27,6 +23,10 @@ Global
 		{F4590922-1EF5-4BC4-A6A2-021EC38EECD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F4590922-1EF5-4BC4-A6A2-021EC38EECD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F4590922-1EF5-4BC4-A6A2-021EC38EECD9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33E1EAC5-33B0-7769-1112-4DD0CFDEB0A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33E1EAC5-33B0-7769-1112-4DD0CFDEB0A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33E1EAC5-33B0-7769-1112-4DD0CFDEB0A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33E1EAC5-33B0-7769-1112-4DD0CFDEB0A1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
