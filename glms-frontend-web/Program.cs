@@ -16,14 +16,7 @@ namespace TechMove
 
             
 
-            builder.Services.AddHttpClient<CurrencyService>();
-
-            builder.Services.AddScoped<IServiceRequestFactory, ServiceRequestFactory>();
-
-            
-            builder.Services.AddScoped<IServiceCostStrategy, UsdToZarCostStrategy>();
-
-            builder.Services.AddScoped<FileValidationService>();
+          
 
             builder.Services.AddHttpClient("ApiClient", client =>
             {

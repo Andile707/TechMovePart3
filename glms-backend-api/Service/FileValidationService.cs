@@ -1,9 +1,18 @@
-﻿public class FileValidationService
+﻿using System.IO;
+public class FileValidationService
 {
     public bool IsValidPdf(string fileName, string contentType)
     {
-        var extension = Path.GetExtension(fileName).ToLower();
+        if (string.IsNullOrWhiteSpace(fileName) ||
+            string.IsNullOrWhiteSpace(contentType))
+        {
+            return false;
+        }
 
-        return extension == ".pdf" && contentType == "application/pdf";
+        var extension = Path.GetExtension(fileName)
+            .ToLowerInvariant();
+
+        return extension == ".pdf" &&
+               contentType == "application/pdf";
     }
 }

@@ -22,6 +22,15 @@ namespace glms_backend_api
             builder.Services.AddDbContext<TechMoveDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+            builder.Services.AddHttpClient<CurrencyService>();
+
+            builder.Services.AddScoped<IServiceRequestFactory, ServiceRequestFactory>();
+
+
+            builder.Services.AddScoped<IServiceCostStrategy, UsdToZarCostStrategy>();
+
+            builder.Services.AddScoped<FileValidationService>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
