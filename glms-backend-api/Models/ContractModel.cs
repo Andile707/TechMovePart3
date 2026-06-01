@@ -13,9 +13,11 @@ namespace TechMove.Models
 
         public ClientModel? Client { get; set; }
 
+        [Required]
         [DataType(DataType.Date)]
         public DateTime StartDate { get; set; }
 
+        [Required]
         [DataType(DataType.Date)]
         public DateTime EndDate { get; set; }
 
@@ -25,12 +27,10 @@ namespace TechMove.Models
         [Required]
         public ServiceLevel ServiceLevel { get; set; }
 
-        // Uploaded PDF details
         public string? SignedAgreementFileName { get; set; }
         public string? SignedAgreementFilePath { get; set; }
 
-        public ICollection<ServiceRequestModel> ServiceRequests { get; set; } = new List<ServiceRequestModel>();
-
-        
+        public ICollection<ServiceRequestModel> ServiceRequests { get; set; }
+            = new List<ServiceRequestModel>();
     }
 }

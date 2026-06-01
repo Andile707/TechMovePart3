@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Diagnostics.Contracts;
 using TechMove.Enums;
 
 namespace TechMove.Models
@@ -15,23 +14,18 @@ namespace TechMove.Models
 
         public ContractModel? Contract { get; set; }
 
-        [Required, StringLength(500)]
+        [Required]
+        [StringLength(500)]
         public string Description { get; set; } = string.Empty;
 
-        [Column(TypeName = "decimal(18,2)")]
-        public decimal Cost { get; set; }
-
-        // USD amount entered by user
+        [Required]
         [Column(TypeName = "decimal(18,2)")]
         public decimal CostUSD { get; set; }
 
-        // Converted ZAR amount
         [Column(TypeName = "decimal(18,2)")]
         public decimal CostZAR { get; set; }
 
         [Required]
         public ServiceRequestStatus Status { get; set; } = ServiceRequestStatus.Pending;
-
-
     }
 }

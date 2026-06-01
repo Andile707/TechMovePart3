@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TechMove.Models;
-using TechMove.Data;
 using Microsoft.EntityFrameworkCore;
+using TechMove.Data;
+using TechMove.Models;
 
 namespace TechMove.Controllers
 {
-    public class ClientsController : Controller
+    [ApiController]
+    [Route("api/[controller]")]
+    public class ClientsController : ControllerBase
     {
         private readonly TechMoveDbContext _context;
 
@@ -14,95 +16,79 @@ namespace TechMove.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<ClientModel>>> GetClients()
         {
-            return View(await _context.Clients.ToListAsync());
+            var clients = await _context.Clients
+                .Include(c => c.Contracts)
+                .ToListAsync();
+
+            return Ok(clients);
         }
 
-        public async Task<IActionResult> Details(int? id)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ClientModel>> GetClient(int id)
         {
-            if (id == null) return NotFound();
-
             var client = await _context.Clients
                 .Include(c => c.Contracts)
                 .FirstOrDefaultAsync(c => c.ClientId == id);
 
-            if (client == null) return NotFound();
+            if (client == null)
+                return NotFound();
 
-            return View(client);
-        }
-
-        public IActionResult Create()
-        {
-            return View();
+            return Ok(client);
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ClientModel client)
+        public async Task<ActionResult<ClientModel>> CreateClient(ClientModel client)
         {
-            if (ModelState.IsValid)
+            _context.Clients.Add(client);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(
+                nameof(GetClient),
+                new { id = client.ClientId },
+                client
+            );
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateClient(int id, ClientModel client)
+        {
+            if (id != client.ClientId)
+                return BadRequest();
+
+            _context.Entry(client).State = EntityState.Modified;
+
+            try
             {
-                _context.Add(client);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                var exists = await _context.Clients.AnyAsync(c => c.ClientId == id);
+
+                if (!exists)
+                    return NotFound();
+
+                throw;
             }
 
-            return View(client);
+            return NoContent();
         }
 
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null) return NotFound();
-
-            var client = await _context.Clients.FindAsync(id);
-
-            if (client == null) return NotFound();
-
-            return View(client);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, ClientModel client)
-        {
-            if (id != client.ClientId) return NotFound();
-
-            if (ModelState.IsValid)
-            {
-                _context.Update(client);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-
-            return View(client);
-        }
-
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null) return NotFound();
-
-            var client = await _context.Clients
-                .FirstOrDefaultAsync(c => c.ClientId == id);
-
-            if (client == null) return NotFound();
-
-            return View(client);
-        }
-
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteClient(int id)
         {
             var client = await _context.Clients.FindAsync(id);
 
-            if (client != null)
-            {
-                _context.Clients.Remove(client);
-                await _context.SaveChangesAsync();
-            }
+            if (client == null)
+                return NotFound();
 
-            return RedirectToAction(nameof(Index));
+            _context.Clients.Remove(client);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }
