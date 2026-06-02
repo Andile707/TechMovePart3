@@ -7,7 +7,7 @@ using System.Text.Json.Serialization;
 
 namespace glms_backend_api
 {
-    public class Program
+    public partial class Program
     {
         public static void Main(string[] args)
         {
@@ -57,4 +57,5 @@ namespace glms_backend_api
             app.Run();
         }
     }
+
 }
