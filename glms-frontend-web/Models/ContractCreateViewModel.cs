@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
-using static TechMove.Models.ContractModel;
-using TechMove.Enums;
+using glms_frontend_web.Models;
 
 namespace TechMove.Models
 {

@@ -1,7 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using TechMove.Factories;
-using TechMove.Service;
-using TechMove.Strategies;
 
 namespace TechMove
 {
@@ -20,7 +17,7 @@ namespace TechMove
 
             builder.Services.AddHttpClient("ApiClient", client =>
             {
-                client.BaseAddress = new Uri("https://localhost:7001/");
+                client.BaseAddress = new Uri("https://localhost:7175");
             });
 
 

@@ -43,7 +43,7 @@
         <label asp-for="ServiceLevel" class="control-label"></label>
         <select asp-for="ServiceLevel"
                 class="form-control"
-                asp-items="Html.GetEnumSelectList<TechMove.Enums.ServiceLevel>()">
+                asp-items="Html.GetEnumSelectList<glms_frontend_web.Models.ServiceLevel>()">
             <option value="">-- Select Service Level --</option>
         </select>
         <span asp-validation-for="ServiceLevel" class="text-danger"></span>

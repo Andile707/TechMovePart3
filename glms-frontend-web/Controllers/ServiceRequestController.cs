@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Net.Http.Json;
 using TechMove.Models;
+using glms_frontend_web.Models;
 
 namespace TechMove.Controllers
 {
