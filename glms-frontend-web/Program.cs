@@ -11,13 +11,15 @@ namespace TechMove
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
-            
 
-          
+
+
+
+            var apiBaseUrl = builder.Configuration["ApiBaseUrl"];
 
             builder.Services.AddHttpClient("ApiClient", client =>
             {
-                client.BaseAddress = new Uri("https://localhost:7175");
+                client.BaseAddress = new Uri(apiBaseUrl!);
             });
 
 
