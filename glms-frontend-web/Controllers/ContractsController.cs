@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Net.Http.Json;
+using glms_frontend_web.Services;
 using TechMove.Models;
 using glms_frontend_web.Models;
 
@@ -7,24 +7,22 @@ namespace TechMove.Controllers
 {
     public class ContractsController : Controller
     {
-        private readonly HttpClient _httpClient;
+        private readonly IContractApiService _contractApiService;
 
-        public ContractsController(IHttpClientFactory httpClientFactory)
+        public ContractsController(IContractApiService contractApiService)
         {
-            _httpClient = httpClientFactory.CreateClient("ApiClient");
+            _contractApiService = contractApiService;
         }
 
         public async Task<IActionResult> Index(DateTime? startDate, DateTime? endDate, ContractStatus? status)
         {
-            var url = $"api/contracts?startDate={startDate:yyyy-MM-dd}&endDate={endDate:yyyy-MM-dd}&status={status}";
-            var contracts = await _httpClient.GetFromJsonAsync<List<ContractModel>>(url);
-
+            var contracts = await _contractApiService.GetContractsAsync(startDate, endDate, status);
             return View(contracts);
         }
 
         public async Task<IActionResult> Details(int id)
         {
-            var contract = await _httpClient.GetFromJsonAsync<ContractModel>($"api/contracts/{id}");
+            var contract = await _contractApiService.GetContractByIdAsync(id);
 
             if (contract == null)
                 return NotFound();
@@ -44,9 +42,9 @@ namespace TechMove.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            var response = await _httpClient.PostAsJsonAsync("api/contracts", model);
+            var success = await _contractApiService.CreateContractAsync(model);
 
-            if (response.IsSuccessStatusCode)
+            if (success)
                 return RedirectToAction(nameof(Index));
 
             ModelState.AddModelError("", "Could not create contract.");

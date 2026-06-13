@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using glms_backend_api.Repositories;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using TechMove.Data;
 using TechMove.Enums;
 using TechMove.Factories;
 using TechMove.Models;
 using TechMove.Observers;
+using TechMove.Repositories;
 using TechMove.Strategies;
 
 namespace TechMove.Controllers
@@ -13,18 +14,21 @@ namespace TechMove.Controllers
     [Route("api/[controller]")]
     public class ServiceRequestsController : ControllerBase
     {
-        private readonly TechMoveDbContext _context;
+        private readonly IServiceRequestRepository _serviceRequestRepository;
+        private readonly IContractRepository _contractRepository;
         private readonly IServiceRequestFactory _serviceRequestFactory;
         private readonly IServiceCostStrategy _serviceCostStrategy;
         private readonly ILoggerFactory _loggerFactory;
 
         public ServiceRequestsController(
-            TechMoveDbContext context,
+            IServiceRequestRepository serviceRequestRepository,
+            IContractRepository contractRepository,
             IServiceRequestFactory serviceRequestFactory,
             IServiceCostStrategy serviceCostStrategy,
             ILoggerFactory loggerFactory)
         {
-            _context = context;
+            _serviceRequestRepository = serviceRequestRepository;
+            _contractRepository = contractRepository;
             _serviceRequestFactory = serviceRequestFactory;
             _serviceCostStrategy = serviceCostStrategy;
             _loggerFactory = loggerFactory;
@@ -33,19 +37,14 @@ namespace TechMove.Controllers
         [HttpGet]
         public async Task<IActionResult> GetServiceRequests()
         {
-            var serviceRequests = await _context.ServiceRequests
-                .Include(s => s.Contract)
-                .ToListAsync();
-
+            var serviceRequests = await _serviceRequestRepository.GetAllAsync();
             return Ok(serviceRequests);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetServiceRequest(int id)
         {
-            var serviceRequest = await _context.ServiceRequests
-                .Include(s => s.Contract)
-                .FirstOrDefaultAsync(s => s.ServiceRequestId == id);
+            var serviceRequest = await _serviceRequestRepository.GetByIdAsync(id);
 
             if (serviceRequest == null)
                 return NotFound();
@@ -56,8 +55,7 @@ namespace TechMove.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateServiceRequest(ServiceRequestModel serviceRequest)
         {
-            var contract = await _context.Contracts
-                .FirstOrDefaultAsync(c => c.ContractId == serviceRequest.ContractId);
+            var contract = await _contractRepository.GetPlainByIdAsync(serviceRequest.ContractId);
 
             if (contract == null)
                 return BadRequest("Please select a valid contract.");
@@ -82,13 +80,13 @@ namespace TechMove.Controllers
                 serviceRequest.Status
             );
 
-            _context.ServiceRequests.Add(newServiceRequest);
-            await _context.SaveChangesAsync();
+            var createdServiceRequest =
+                await _serviceRequestRepository.CreateAsync(newServiceRequest);
 
             return CreatedAtAction(
                 nameof(GetServiceRequest),
-                new { id = newServiceRequest.ServiceRequestId },
-                newServiceRequest
+                new { id = createdServiceRequest.ServiceRequestId },
+                createdServiceRequest
             );
         }
 
@@ -100,8 +98,7 @@ namespace TechMove.Controllers
             if (id != serviceRequest.ServiceRequestId)
                 return BadRequest("Service request ID mismatch.");
 
-            var contract = await _context.Contracts
-                .FirstOrDefaultAsync(c => c.ContractId == serviceRequest.ContractId);
+            var contract = await _contractRepository.GetPlainByIdAsync(serviceRequest.ContractId);
 
             if (contract == null)
                 return BadRequest("Invalid contract.");
@@ -120,16 +117,16 @@ namespace TechMove.Controllers
 
             try
             {
-                _context.ServiceRequests.Update(serviceRequest);
-                await _context.SaveChangesAsync();
+                var updatedServiceRequest =
+                    await _serviceRequestRepository.UpdateAsync(serviceRequest);
 
-                NotifyObservers(serviceRequest);
+                NotifyObservers(updatedServiceRequest);
 
-                return Ok(serviceRequest);
+                return Ok(updatedServiceRequest);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!await ServiceRequestExists(id))
+                if (!await _serviceRequestRepository.ExistsAsync(id))
                     return NotFound();
 
                 throw;
@@ -139,21 +136,14 @@ namespace TechMove.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteServiceRequest(int id)
         {
-            var serviceRequest = await _context.ServiceRequests.FindAsync(id);
+            var serviceRequest = await _serviceRequestRepository.GetPlainByIdAsync(id);
 
             if (serviceRequest == null)
                 return NotFound();
 
-            _context.ServiceRequests.Remove(serviceRequest);
-            await _context.SaveChangesAsync();
+            await _serviceRequestRepository.DeleteAsync(serviceRequest);
 
             return NoContent();
-        }
-
-        private async Task<bool> ServiceRequestExists(int id)
-        {
-            return await _context.ServiceRequests
-                .AnyAsync(e => e.ServiceRequestId == id);
         }
 
         private void NotifyObservers(ServiceRequestModel serviceRequest)

@@ -1,28 +1,28 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Net.Http.Json;
+﻿using glms_frontend_web.Models;
+using glms_frontend_web.Services;
+using Microsoft.AspNetCore.Mvc;
 using TechMove.Models;
-using glms_frontend_web.Models;
 
 namespace TechMove.Controllers
 {
     public class ClientsController : Controller
     {
-        private readonly HttpClient _httpClient;
+        private readonly IClientApiService _clientApiService;
 
-        public ClientsController(IHttpClientFactory httpClientFactory)
+        public ClientsController(IClientApiService clientApiService)
         {
-            _httpClient = httpClientFactory.CreateClient("ApiClient");
+            _clientApiService = clientApiService;
         }
 
         public async Task<IActionResult> Index()
         {
-            var clients = await _httpClient.GetFromJsonAsync<List<ClientModel>>("api/clients");
+            var clients = await _clientApiService.GetClientsAsync();
             return View(clients);
         }
 
         public async Task<IActionResult> Details(int id)
         {
-            var client = await _httpClient.GetFromJsonAsync<ClientModel>($"api/clients/{id}");
+            var client = await _clientApiService.GetClientByIdAsync(id);
 
             if (client == null)
                 return NotFound();
@@ -42,9 +42,9 @@ namespace TechMove.Controllers
             if (!ModelState.IsValid)
                 return View(client);
 
-            var response = await _httpClient.PostAsJsonAsync("api/clients", client);
+            var success = await _clientApiService.CreateClientAsync(client);
 
-            if (response.IsSuccessStatusCode)
+            if (success)
                 return RedirectToAction(nameof(Index));
 
             ModelState.AddModelError("", "Could not create client.");

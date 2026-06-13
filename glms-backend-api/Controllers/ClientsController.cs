@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using TechMove.Data;
 using TechMove.Models;
+using TechMove.Repositories;
 
 namespace TechMove.Controllers
 {
@@ -9,29 +9,24 @@ namespace TechMove.Controllers
     [Route("api/[controller]")]
     public class ClientsController : ControllerBase
     {
-        private readonly TechMoveDbContext _context;
+        private readonly IClientRepository _clientRepository;
 
-        public ClientsController(TechMoveDbContext context)
+        public ClientsController(IClientRepository clientRepository)
         {
-            _context = context;
+            _clientRepository = clientRepository;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ClientModel>>> GetClients()
         {
-            var clients = await _context.Clients
-                .Include(c => c.Contracts)
-                .ToListAsync();
-
+            var clients = await _clientRepository.GetAllAsync();
             return Ok(clients);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<ClientModel>> GetClient(int id)
         {
-            var client = await _context.Clients
-                .Include(c => c.Contracts)
-                .FirstOrDefaultAsync(c => c.ClientId == id);
+            var client = await _clientRepository.GetByIdAsync(id);
 
             if (client == null)
                 return NotFound();
@@ -42,13 +37,12 @@ namespace TechMove.Controllers
         [HttpPost]
         public async Task<ActionResult<ClientModel>> CreateClient(ClientModel client)
         {
-            _context.Clients.Add(client);
-            await _context.SaveChangesAsync();
+            var createdClient = await _clientRepository.CreateAsync(client);
 
             return CreatedAtAction(
                 nameof(GetClient),
-                new { id = client.ClientId },
-                client
+                new { id = createdClient.ClientId },
+                createdClient
             );
         }
 
@@ -58,17 +52,16 @@ namespace TechMove.Controllers
             if (id != client.ClientId)
                 return BadRequest();
 
-            _context.Entry(client).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                var updated = await _clientRepository.UpdateAsync(id, client);
+
+                if (!updated)
+                    return NotFound();
             }
             catch (DbUpdateConcurrencyException)
             {
-                var exists = await _context.Clients.AnyAsync(c => c.ClientId == id);
-
-                if (!exists)
+                if (!await _clientRepository.ExistsAsync(id))
                     return NotFound();
 
                 throw;
@@ -80,13 +73,10 @@ namespace TechMove.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteClient(int id)
         {
-            var client = await _context.Clients.FindAsync(id);
+            var deleted = await _clientRepository.DeleteAsync(id);
 
-            if (client == null)
+            if (!deleted)
                 return NotFound();
-
-            _context.Clients.Remove(client);
-            await _context.SaveChangesAsync();
 
             return NoContent();
         }

@@ -1,9 +1,11 @@
+using glms_backend_api.Repositories;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 using TechMove.Data;
 using TechMove.Factories;
+using TechMove.Repositories;
 using TechMove.Service;
 using TechMove.Strategies;
-using System.Text.Json.Serialization;
 
 namespace glms_backend_api
 {
@@ -33,6 +35,10 @@ namespace glms_backend_api
                ));
 
             builder.Services.AddHttpClient<CurrencyService>();
+
+            builder.Services.AddScoped<IClientRepository, ClientRepository>();
+            builder.Services.AddScoped<IContractRepository, ContractRepository>();
+            builder.Services.AddScoped<IServiceRequestRepository, ServiceRequestRepository>();
 
             builder.Services.AddScoped<IServiceRequestFactory, ServiceRequestFactory>();
 

@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using TechMove.Data;
+﻿using glms_backend_api.Repositories;
+using Microsoft.AspNetCore.Mvc;
 using TechMove.Enums;
 using TechMove.Models;
+using TechMove.Repositories;
 
 namespace TechMove.Controllers
 {
@@ -10,16 +10,16 @@ namespace TechMove.Controllers
     [Route("api/[controller]")]
     public class ContractsController : ControllerBase
     {
-        private readonly TechMoveDbContext _context;
+        private readonly IContractRepository _contractRepository;
         private readonly IWebHostEnvironment _environment;
         private readonly FileValidationService _fileValidationService;
 
         public ContractsController(
-            TechMoveDbContext context,
+            IContractRepository contractRepository,
             IWebHostEnvironment environment,
             FileValidationService fileValidationService)
         {
-            _context = context;
+            _contractRepository = contractRepository;
             _environment = environment;
             _fileValidationService = fileValidationService;
         }
@@ -30,29 +30,14 @@ namespace TechMove.Controllers
             DateTime? endDate,
             ContractStatus? status)
         {
-            var contracts = _context.Contracts
-                .Include(c => c.Client)
-                .AsQueryable();
-
-            if (startDate.HasValue)
-                contracts = contracts.Where(c => c.StartDate >= startDate.Value);
-
-            if (endDate.HasValue)
-                contracts = contracts.Where(c => c.EndDate <= endDate.Value);
-
-            if (status.HasValue)
-                contracts = contracts.Where(c => c.Status == status.Value);
-
-            return Ok(await contracts.ToListAsync());
+            var contracts = await _contractRepository.GetAllAsync(startDate, endDate, status);
+            return Ok(contracts);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetContract(int id)
         {
-            var contract = await _context.Contracts
-                .Include(c => c.Client)
-                .Include(c => c.ServiceRequests)
-                .FirstOrDefaultAsync(c => c.ContractId == id);
+            var contract = await _contractRepository.GetByIdAsync(id);
 
             if (contract == null)
                 return NotFound();
@@ -67,9 +52,7 @@ namespace TechMove.Controllers
                 return BadRequest(ModelState);
 
             if (model.SignedAgreement == null || model.SignedAgreement.Length == 0)
-            {
                 return BadRequest("Please upload a signed agreement PDF.");
-            }
 
             if (!_fileValidationService.IsValidPdf(
                 model.SignedAgreement.FileName,
@@ -108,13 +91,12 @@ namespace TechMove.Controllers
                 SignedAgreementFilePath = $"/uploads/agreements/{uniqueFileName}"
             };
 
-            _context.Contracts.Add(contract);
-            await _context.SaveChangesAsync();
+            var createdContract = await _contractRepository.CreateAsync(contract);
 
             return CreatedAtAction(
                 nameof(GetContract),
-                new { id = contract.ContractId },
-                contract
+                new { id = createdContract.ContractId },
+                createdContract
             );
         }
 
@@ -126,7 +108,7 @@ namespace TechMove.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var contract = await _context.Contracts.FindAsync(id);
+            var contract = await _contractRepository.GetPlainByIdAsync(id);
 
             if (contract == null)
                 return NotFound();
@@ -180,10 +162,9 @@ namespace TechMove.Controllers
                 contract.SignedAgreementFilePath = $"/uploads/agreements/{uniqueFileName}";
             }
 
-            _context.Contracts.Update(contract);
-            await _context.SaveChangesAsync();
+            var updatedContract = await _contractRepository.UpdateAsync(contract);
 
-            return Ok(contract);
+            return Ok(updatedContract);
         }
 
         [HttpPatch("{id}/status")]
@@ -191,21 +172,22 @@ namespace TechMove.Controllers
             int id,
             [FromBody] ContractStatus status)
         {
-            var contract = await _context.Contracts.FindAsync(id);
+            var contract = await _contractRepository.GetPlainByIdAsync(id);
 
             if (contract == null)
                 return NotFound();
 
             contract.Status = status;
-            await _context.SaveChangesAsync();
 
-            return Ok(contract);
+            var updatedContract = await _contractRepository.UpdateAsync(contract);
+
+            return Ok(updatedContract);
         }
 
         [HttpGet("{id}/agreement")]
         public async Task<IActionResult> DownloadAgreement(int id)
         {
-            var contract = await _context.Contracts.FindAsync(id);
+            var contract = await _contractRepository.GetPlainByIdAsync(id);
 
             if (contract == null || string.IsNullOrEmpty(contract.SignedAgreementFileName))
                 return NotFound();
@@ -230,7 +212,7 @@ namespace TechMove.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteContract(int id)
         {
-            var contract = await _context.Contracts.FindAsync(id);
+            var contract = await _contractRepository.GetPlainByIdAsync(id);
 
             if (contract == null)
                 return NotFound();
@@ -248,8 +230,7 @@ namespace TechMove.Controllers
                     System.IO.File.Delete(filePath);
             }
 
-            _context.Contracts.Remove(contract);
-            await _context.SaveChangesAsync();
+            await _contractRepository.DeleteAsync(contract);
 
             return NoContent();
         }

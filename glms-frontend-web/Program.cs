@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using glms_frontend_web.Services;
 
 namespace TechMove
 {
@@ -12,7 +13,9 @@ namespace TechMove
             builder.Services.AddControllersWithViews();
 
 
-
+            builder.Services.AddScoped<IClientApiService, ClientApiService>();
+            builder.Services.AddScoped<IContractApiService, ContractApiService>();
+            builder.Services.AddScoped<IServiceRequestApiService, ServiceRequestApiService>();
 
 
             var apiBaseUrl = builder.Configuration["ApiBaseUrl"];

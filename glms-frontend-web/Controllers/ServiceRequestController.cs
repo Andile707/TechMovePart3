@@ -1,39 +1,33 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using glms_frontend_web.Models;
+using glms_frontend_web.Services;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Net.Http.Json;
 using TechMove.Models;
-using glms_frontend_web.Models;
 
 namespace TechMove.Controllers
 {
     public class ServiceRequestController : Controller
     {
-        private readonly HttpClient _httpClient;
+        private readonly IServiceRequestApiService _serviceRequestApiService;
+        private readonly IContractApiService _contractApiService;
 
-        public ServiceRequestController(IHttpClientFactory httpClientFactory)
+        public ServiceRequestController(
+            IServiceRequestApiService serviceRequestApiService,
+            IContractApiService contractApiService)
         {
-            _httpClient = httpClientFactory.CreateClient("ApiClient");
+            _serviceRequestApiService = serviceRequestApiService;
+            _contractApiService = contractApiService;
         }
 
         public async Task<IActionResult> Index()
         {
-            var serviceRequests =
-                await _httpClient.GetFromJsonAsync<List<ServiceRequestModel>>("api/servicerequests");
-
+            var serviceRequests = await _serviceRequestApiService.GetServiceRequestsAsync();
             return View(serviceRequests);
         }
 
         public async Task<IActionResult> Create()
         {
-            var contracts =
-                await _httpClient.GetFromJsonAsync<List<ContractModel>>("api/contracts");
-
-            ViewBag.ContractId = new SelectList(
-                contracts,
-                "ContractId",
-                "ServiceLevel"
-            );
-
+            await PopulateContractsDropdown();
             return View();
         }
 
@@ -42,27 +36,40 @@ namespace TechMove.Controllers
         public async Task<IActionResult> Create(ServiceRequestModel serviceRequest)
         {
             if (!ModelState.IsValid)
+            {
+                await PopulateContractsDropdown();
                 return View(serviceRequest);
+            }
 
-            var response =
-                await _httpClient.PostAsJsonAsync("api/servicerequests", serviceRequest);
+            var success = await _serviceRequestApiService.CreateServiceRequestAsync(serviceRequest);
 
-            if (response.IsSuccessStatusCode)
+            if (success)
                 return RedirectToAction(nameof(Index));
 
+            await PopulateContractsDropdown();
             ModelState.AddModelError("", "Could not create service request.");
             return View(serviceRequest);
         }
 
         public async Task<IActionResult> Details(int id)
         {
-            var serviceRequest =
-                await _httpClient.GetFromJsonAsync<ServiceRequestModel>($"api/servicerequests/{id}");
+            var serviceRequest = await _serviceRequestApiService.GetServiceRequestByIdAsync(id);
 
             if (serviceRequest == null)
                 return NotFound();
 
             return View(serviceRequest);
+        }
+
+        private async Task PopulateContractsDropdown()
+        {
+            var contracts = await _contractApiService.GetContractsAsync(null, null, null);
+
+            ViewBag.ContractId = new SelectList(
+                contracts,
+                "ContractId",
+                "ServiceLevel"
+            );
         }
     }
 }
