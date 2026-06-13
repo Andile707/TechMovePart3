@@ -8,5 +8,7 @@ namespace glms_frontend_web.Services
         Task<List<ServiceRequestModel>?> GetServiceRequestsAsync();
         Task<ServiceRequestModel?> GetServiceRequestByIdAsync(int id);
         Task<bool> CreateServiceRequestAsync(ServiceRequestModel serviceRequest);
+        Task<bool> UpdateServiceRequestAsync(int id, ServiceRequestModel serviceRequest);
+        Task<bool> DeleteServiceRequestAsync(int id);
     }
 }

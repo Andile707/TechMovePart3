@@ -50,5 +50,57 @@ namespace TechMove.Controllers
             ModelState.AddModelError("", "Could not create client.");
             return View(client);
         }
+
+        public async Task<IActionResult> Edit(int id)
+        {
+            var client = await _clientApiService.GetClientByIdAsync(id);
+
+            if (client == null)
+                return NotFound();
+
+            return View(client);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, ClientModel client)
+        {
+            if (id != client.ClientId)
+                return BadRequest();
+
+            if (!ModelState.IsValid)
+                return View(client);
+
+            var success = await _clientApiService.UpdateClientAsync(id, client);
+
+            if (success)
+                return RedirectToAction(nameof(Index));
+
+            ModelState.AddModelError("", "Could not update client.");
+            return View(client);
+        }
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            var client = await _clientApiService.GetClientByIdAsync(id);
+
+            if (client == null)
+                return NotFound();
+
+            return View(client);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var success = await _clientApiService.DeleteClientAsync(id);
+
+            if (success)
+                return RedirectToAction(nameof(Index));
+
+            ModelState.AddModelError("", "Could not delete client.");
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

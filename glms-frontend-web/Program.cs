@@ -17,6 +17,11 @@ namespace TechMove
             builder.Services.AddScoped<IContractApiService, ContractApiService>();
             builder.Services.AddScoped<IServiceRequestApiService, ServiceRequestApiService>();
 
+            builder.Services.AddScoped<IAuthApiService, AuthApiService>();
+
+            builder.Services.AddHttpContextAccessor();
+
+            builder.Services.AddSession();
 
             var apiBaseUrl = builder.Configuration["ApiBaseUrl"];
 
@@ -40,6 +45,8 @@ namespace TechMove
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseSession();
 
             app.UseAuthorization();
 

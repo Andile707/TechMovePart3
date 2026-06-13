@@ -1,4 +1,5 @@
 ﻿using glms_backend_api.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TechMove.Enums;
 using TechMove.Models;
@@ -8,6 +9,7 @@ namespace TechMove.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class ContractsController : ControllerBase
     {
         private readonly IContractRepository _contractRepository;

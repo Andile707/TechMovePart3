@@ -1,4 +1,5 @@
 ﻿using glms_backend_api.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TechMove.Enums;
@@ -12,6 +13,7 @@ namespace TechMove.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class ServiceRequestsController : ControllerBase
     {
         private readonly IServiceRequestRepository _serviceRequestRepository;

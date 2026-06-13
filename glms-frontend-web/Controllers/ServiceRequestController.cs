@@ -71,5 +71,69 @@ namespace TechMove.Controllers
                 "ServiceLevel"
             );
         }
+
+        public async Task<IActionResult> Edit(int id)
+        {
+            var serviceRequest =
+                await _serviceRequestApiService.GetServiceRequestByIdAsync(id);
+
+            if (serviceRequest == null)
+                return NotFound();
+
+            await PopulateContractsDropdown();
+
+            return View(serviceRequest);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, ServiceRequestModel serviceRequest)
+        {
+            if (id != serviceRequest.ServiceRequestId)
+                return BadRequest();
+
+            if (!ModelState.IsValid)
+            {
+                await PopulateContractsDropdown();
+                return View(serviceRequest);
+            }
+
+            var success =
+                await _serviceRequestApiService.UpdateServiceRequestAsync(id, serviceRequest);
+
+            if (success)
+                return RedirectToAction(nameof(Index));
+
+            await PopulateContractsDropdown();
+
+            ModelState.AddModelError("", "Could not update service request.");
+            return View(serviceRequest);
+        }
+        public async Task<IActionResult> Delete(int id)
+        {
+            var serviceRequest =
+                await _serviceRequestApiService.GetServiceRequestByIdAsync(id);
+
+            if (serviceRequest == null)
+                return NotFound();
+
+            return View(serviceRequest);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var success =
+                await _serviceRequestApiService.DeleteServiceRequestAsync(id);
+
+            if (success)
+                return RedirectToAction(nameof(Index));
+
+            ModelState.AddModelError("", "Could not delete service request.");
+
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }
